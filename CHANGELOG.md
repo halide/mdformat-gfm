@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+- Removed
+  - Python 3.9 support
+  - Dependency on mdformat-tables
+- Added
+  - `tables` plugin from mdformat-tables
+
 ## 0.4.1
 
 - Fixed
