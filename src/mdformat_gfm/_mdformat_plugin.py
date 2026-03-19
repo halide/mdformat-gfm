@@ -1,4 +1,5 @@
 import re
+from types import MappingProxyType
 
 from markdown_it import MarkdownIt
 import mdformat.plugins
@@ -44,6 +45,14 @@ def _render_with_default_renderer(node: RenderTreeNode, context: RenderContext) 
     return text
 
 
+def _context_with_wrap_mode(context: RenderContext, wrap_mode: str | int) -> RenderContext:
+    options = dict(context.options)
+    mdformat_options = dict(options.get("mdformat", {}))
+    mdformat_options["wrap"] = wrap_mode
+    options["mdformat"] = MappingProxyType(mdformat_options)
+    return context._replace(options=MappingProxyType(options))
+
+
 def _is_task_list_item(node: RenderTreeNode) -> bool:
     assert node.type == "list_item"
     classes = node.attrs.get("class", "")
@@ -69,12 +78,8 @@ def _list_item_renderer(node: RenderTreeNode, context: RenderContext) -> str:
 
     checkmark = "x" if 'checked="checked"' in html_inline_node.content else " "
 
-    text = _render_with_default_renderer(node, context)
+    text = _render_with_default_renderer(node, _context_with_wrap_mode(context, "keep"))
 
-    if context.do_wrap:
-        wrap_mode = context.options["mdformat"]["wrap"]
-        if isinstance(wrap_mode, int):
-            text = text[4:]  # Remove the "xxxx" added in `_postprocess_inline`
     # Strip leading space chars (numeric representations)
     text = re.sub(r"^(&#32;)+", "", text)
     text = text.lstrip()
@@ -84,17 +89,8 @@ def _list_item_renderer(node: RenderTreeNode, context: RenderContext) -> str:
 def _postprocess_inline(text: str, node: RenderTreeNode, context: RenderContext) -> str:
     """Postprocess inline tokens.
 
-    Fix word wrap of the first line in a task list item. It should be
-    wrapped narrower than normal because of the "[ ] " prefix that
-    indicates a task list item. We fool word wrap by prefixing an
-    unwrappable dummy string of the same length. This prefix needs to be
-    later removed (in `_list_item_renderer`).
+    Escape text in task list items without changing their wrapping mode.
     """
-    if not context.do_wrap:
-        return text
-    wrap_mode = context.options["mdformat"]["wrap"]
-    if not isinstance(wrap_mode, int):
-        return text
     if (
         node.parent
         and node.parent.type == "paragraph"
@@ -105,7 +101,6 @@ def _postprocess_inline(text: str, node: RenderTreeNode, context: RenderContext)
     ):
         text = text.lstrip("\x00")
         text = text.lstrip()
-        text = "xxxx" + text
     return text
 
 

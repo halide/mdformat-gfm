@@ -18,8 +18,14 @@ Wrap tasklist
 .
 - [ ] no wrap aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a
   - [ ] no wrap aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a
-- [ ] do wrap aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-  a
-  - [ ] do wrap aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    a
+- [ ] do wrap aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a
+  - [ ] do wrap aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a
+.
+
+
+Long tasklist stays on one line
+.
+- [ ] Benchmarks are included here if the change is intended to affect performance.
+.
+- [ ] Benchmarks are included here if the change is intended to affect performance.
 .

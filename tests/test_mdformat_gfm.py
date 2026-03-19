@@ -64,6 +64,14 @@ def test_wrap_width_50__cli(line, title, text, expected, tmp_path):
     assert md_new == expected
 
 
+def test_task_list_items_do_not_wrap__api():
+    text = (
+        "- [ ] Benchmarks are included here if the change is intended to affect "
+        "performance.\n"
+    )
+    assert mdformat.text(text, options={"wrap": 50}, extensions={"gfm"}) == text
+
+
 @pytest.mark.parametrize(
     "line,title,text,expected",
     COMPACT_TABLES_CASES,
